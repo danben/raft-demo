@@ -1,0 +1,15 @@
+aiofiles==23.1.0
+flake8==6.0.0
+grpc-stubs==1.24.12
+grpcio==1.51.3
+grpcio-tools==1.51.3
+mccabe==0.7.0
+mypy==1.0.1
+mypy-extensions==1.0.0
+mypy-protobuf==3.4.0
+protobuf==4.22.0
+pycodestyle==2.10.0
+pyflakes==3.0.1
+types-aiofiles==23.1.0.0
+types-protobuf==4.22.0.0
+typing_extensions==4.5.0
