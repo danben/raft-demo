@@ -1,6 +1,4 @@
 import asyncio
-import sys
-
 from abc import ABC, abstractmethod
 from dataclasses import InitVar, dataclass, field
 
@@ -37,8 +35,9 @@ class LeaderState(NodeState):
     # confirm their highest replication indices.
     match_index: dict[int, int] = field(default_factory=dict)
 
-    def __post_init__(self, all_ports: list[int], my_port: int,
-                      last_log_index: int) -> None:
+    def __post_init__(
+        self, all_ports: list[int], my_port: int, last_log_index: int
+    ) -> None:
         for port in all_ports:
             if port != my_port:
                 self.next_index[port] = last_log_index + 1
@@ -69,6 +68,4 @@ class FollowerState(NodeState):
 
     def teardown(self):
         if self.receive_heartbeats_task is not None:
-            print('Bug: attempted to transition from follower state without '
-                  'removing heartbeat task')
-            sys.exit(1)
+            self.receive_heartbeats_task.cancel()

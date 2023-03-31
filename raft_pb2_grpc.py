@@ -15,15 +15,15 @@ class RaftStub(object):
             channel: A grpc.Channel.
         """
         self.RequestVote = channel.unary_unary(
-                '/Raft/RequestVote',
-                request_serializer=raft__pb2.VoteRequest.SerializeToString,
-                response_deserializer=raft__pb2.RequestVoteResponse.FromString,
-                )
+            "/Raft/RequestVote",
+            request_serializer=raft__pb2.VoteRequest.SerializeToString,
+            response_deserializer=raft__pb2.RequestVoteResponse.FromString,
+        )
         self.AppendEntries = channel.unary_unary(
-                '/Raft/AppendEntries',
-                request_serializer=raft__pb2.AppendEntriesRequest.SerializeToString,
-                response_deserializer=raft__pb2.AppendEntriesResponse.FromString,
-                )
+            "/Raft/AppendEntries",
+            request_serializer=raft__pb2.AppendEntriesRequest.SerializeToString,
+            response_deserializer=raft__pb2.AppendEntriesResponse.FromString,
+        )
 
 
 class RaftServicer(object):
@@ -32,71 +32,96 @@ class RaftServicer(object):
     def RequestVote(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
     def AppendEntries(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
 
 def add_RaftServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'RequestVote': grpc.unary_unary_rpc_method_handler(
-                    servicer.RequestVote,
-                    request_deserializer=raft__pb2.VoteRequest.FromString,
-                    response_serializer=raft__pb2.RequestVoteResponse.SerializeToString,
-            ),
-            'AppendEntries': grpc.unary_unary_rpc_method_handler(
-                    servicer.AppendEntries,
-                    request_deserializer=raft__pb2.AppendEntriesRequest.FromString,
-                    response_serializer=raft__pb2.AppendEntriesResponse.SerializeToString,
-            ),
+        "RequestVote": grpc.unary_unary_rpc_method_handler(
+            servicer.RequestVote,
+            request_deserializer=raft__pb2.VoteRequest.FromString,
+            response_serializer=raft__pb2.RequestVoteResponse.SerializeToString,
+        ),
+        "AppendEntries": grpc.unary_unary_rpc_method_handler(
+            servicer.AppendEntries,
+            request_deserializer=raft__pb2.AppendEntriesRequest.FromString,
+            response_serializer=raft__pb2.AppendEntriesResponse.SerializeToString,
+        ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'Raft', rpc_method_handlers)
+        "Raft", rpc_method_handlers
+    )
     server.add_generic_rpc_handlers((generic_handler,))
 
 
- # This class is part of an EXPERIMENTAL API.
+# This class is part of an EXPERIMENTAL API.
 class Raft(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def RequestVote(request,
+    def RequestVote(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Raft/RequestVote',
+            "/Raft/RequestVote",
             raft__pb2.VoteRequest.SerializeToString,
             raft__pb2.RequestVoteResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
 
     @staticmethod
-    def AppendEntries(request,
+    def AppendEntries(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Raft/AppendEntries',
+            "/Raft/AppendEntries",
             raft__pb2.AppendEntriesRequest.SerializeToString,
             raft__pb2.AppendEntriesResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
 
 
 class ClusterStub(object):
@@ -109,15 +134,15 @@ class ClusterStub(object):
             channel: A grpc.Channel.
         """
         self.ProposeMapping = channel.unary_unary(
-                '/Cluster/ProposeMapping',
-                request_serializer=raft__pb2.Mapping.SerializeToString,
-                response_deserializer=raft__pb2.ProposeMappingResponse.FromString,
-                )
+            "/Cluster/ProposeMapping",
+            request_serializer=raft__pb2.Mapping.SerializeToString,
+            response_deserializer=raft__pb2.ProposeMappingResponse.FromString,
+        )
         self.GetValue = channel.unary_unary(
-                '/Cluster/GetValue',
-                request_serializer=raft__pb2.Key.SerializeToString,
-                response_deserializer=raft__pb2.GetValueResponse.FromString,
-                )
+            "/Cluster/GetValue",
+            request_serializer=raft__pb2.Key.SerializeToString,
+            response_deserializer=raft__pb2.GetValueResponse.FromString,
+        )
 
 
 class ClusterServicer(object):
@@ -126,68 +151,93 @@ class ClusterServicer(object):
     def ProposeMapping(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
     def GetValue(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
 
 def add_ClusterServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'ProposeMapping': grpc.unary_unary_rpc_method_handler(
-                    servicer.ProposeMapping,
-                    request_deserializer=raft__pb2.Mapping.FromString,
-                    response_serializer=raft__pb2.ProposeMappingResponse.SerializeToString,
-            ),
-            'GetValue': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetValue,
-                    request_deserializer=raft__pb2.Key.FromString,
-                    response_serializer=raft__pb2.GetValueResponse.SerializeToString,
-            ),
+        "ProposeMapping": grpc.unary_unary_rpc_method_handler(
+            servicer.ProposeMapping,
+            request_deserializer=raft__pb2.Mapping.FromString,
+            response_serializer=raft__pb2.ProposeMappingResponse.SerializeToString,
+        ),
+        "GetValue": grpc.unary_unary_rpc_method_handler(
+            servicer.GetValue,
+            request_deserializer=raft__pb2.Key.FromString,
+            response_serializer=raft__pb2.GetValueResponse.SerializeToString,
+        ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'Cluster', rpc_method_handlers)
+        "Cluster", rpc_method_handlers
+    )
     server.add_generic_rpc_handlers((generic_handler,))
 
 
- # This class is part of an EXPERIMENTAL API.
+# This class is part of an EXPERIMENTAL API.
 class Cluster(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def ProposeMapping(request,
+    def ProposeMapping(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Cluster/ProposeMapping',
+            "/Cluster/ProposeMapping",
             raft__pb2.Mapping.SerializeToString,
             raft__pb2.ProposeMappingResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
 
     @staticmethod
-    def GetValue(request,
+    def GetValue(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Cluster/GetValue',
+            "/Cluster/GetValue",
             raft__pb2.Key.SerializeToString,
             raft__pb2.GetValueResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
