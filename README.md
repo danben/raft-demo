@@ -30,6 +30,7 @@ Since this isn't meant to be used in earnest, I took a few shortcuts (all of whi
 
 - Nodes are identified fully by the port they listed on for Raft RPC requests. This is possible under the assumption that they'll always run on localhost (an assumption presently baked in, as it's not possible to specify an IP address to connect to).
 - Since there is no log compaction, there is an invariant that the index of a log entry is the same as its (0-indexed) position in the log.
+- The ports for the raft service are all consecutive, and the ports for the cluster service are always specified to be (raft service port + number of raft service ports). There is some hacky code in the test harness and the cluster client that makes use of this assumption.
 
 ## Trying it out
 
