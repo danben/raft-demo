@@ -8,9 +8,9 @@ This amounts to much of the algorithm described in the [Raft paper](https://raft
 Tested under Python 3.11 on Ubuntu, though 3.10 is likely sufficient. 
 
 Third party libraries:
-[aiofiles](https://pypi.org/project/aiofiles/)
-[grpc](https://grpc.io/docs/languages/python/quickstart/)
-[uvloop](https://pypi.org/project/uvloop/)
+- [aiofiles](https://pypi.org/project/aiofiles/)
+- [grpc](https://grpc.io/docs/languages/python/quickstart/)
+- [uvloop](https://pypi.org/project/uvloop/)
 
 (Or use `requirements.txt` - most of what's in there is only for typing)
 
