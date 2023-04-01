@@ -40,7 +40,7 @@ Since this isn't meant to be used in earnest, I took a few shortcuts (all of whi
 
 If you're brave enough to run code that I've written on your own machine, the easiest thing to do is to just run `python -m test.test_harness` (possibly editing the top of `test/test_harness.py` to specify a port range and log directory, and/or the bottom to select the test you'd like to run - there are currently two!) This will bring up a cluster of five nodes in separate processes, run the test, and bring all of the nodes down again.
 
-# Miscellaneous
+## Miscellaneous
 
 - Formatting by [black](https://pypi.org/project/black/).
 - I replaced the default async executor with uvloop, which is supposed to improve performance in asyncio applications in general.
