@@ -2,9 +2,9 @@ from dataclasses import dataclass, field
 from typing import Callable, Self
 
 import grpc
-import raft_pb2_grpc
+from rpc.raft_pb2_grpc import RaftServicer, add_RaftServicer_to_server
 
-from raft_pb2 import (
+from rpc.raft_pb2 import (
     AppendEntriesRequest,
     AppendEntriesResponse,
     RequestVoteResponse,
@@ -13,7 +13,7 @@ from raft_pb2 import (
 
 
 @dataclass(kw_only=True)
-class Servicer(raft_pb2_grpc.RaftServicer):
+class Servicer(RaftServicer):
     request_vote_handler: Callable[[VoteRequest], RequestVoteResponse]
     append_entries_handler: Callable[
         [AppendEntriesRequest], AppendEntriesResponse
@@ -44,7 +44,7 @@ class Server:
             request_vote_handler=self.request_vote_handler,
             append_entries_handler=self.append_entries_handler,
         )
-        raft_pb2_grpc.add_RaftServicer_to_server(servicer, self.server)
+        add_RaftServicer_to_server(servicer, self.server)
         self.server.add_insecure_port(f"[::]:{self.port}")
 
     async def serve(self: Self) -> None:

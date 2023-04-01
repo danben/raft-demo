@@ -17,7 +17,7 @@ import raft_server
 from log import Log
 from node_state import CandidateState, FollowerState, LeaderState, NodeState
 from raft_client import Client
-from raft_pb2 import (
+from rpc.raft_pb2 import (
     AppendEntriesRequest,
     AppendEntriesResponse,
     GetValueResponse,

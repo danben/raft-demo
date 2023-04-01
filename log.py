@@ -8,7 +8,7 @@ from enum import Enum
 from dataclasses import dataclass, field
 from typing import Self
 
-from raft_pb2 import AppendEntriesRequest, LogEntry
+from rpc.raft_pb2 import AppendEntriesRequest, LogEntry
 from task_scheduler import run_in_background
 
 

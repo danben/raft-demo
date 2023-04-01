@@ -6,19 +6,19 @@ from typing import Self
 import grpc
 from grpc.aio._call import AioRpcError
 
-import raft_pb2_grpc
-from raft_pb2 import GetValueResponse, Key, Mapping, ProposeMappingResponse
+from rpc.raft_pb2_grpc import ClusterStub
+from rpc.raft_pb2 import GetValueResponse, Key, Mapping, ProposeMappingResponse
 
 
 @dataclass(slots=True)
 class RpcClient:
     port: int = field()
     channel: grpc.aio.Channel = field(init=False)
-    stub: raft_pb2_grpc.ClusterStub = field(init=False)
+    stub: ClusterStub = field(init=False)
 
     def __post_init__(self) -> None:
         self.channel = grpc.aio.insecure_channel(f"localhost:{self.port}")
-        self.stub = raft_pb2_grpc.ClusterStub(self.channel)
+        self.stub = ClusterStub(self.channel)
 
     async def close(self: Self) -> None:
         await self.channel.close()
