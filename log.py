@@ -51,12 +51,12 @@ class Log:
 
     @classmethod
     async def create(cls, path: str) -> Self:
-        ret = cls(path)
+        ret: Self = cls(path)
         ret._last_applied = -1
         file_exists: bool = os.path.isfile(path)
         if file_exists:
             ret._fp = await aiofiles.open(ret._path, "r+")
-            lines = await ret._fp.readlines()
+            lines: list[str] = await ret._fp.readlines()
             for line in lines:
                 entry = json.loads(
                     line, object_hook=JSONCodec.decode_log_entry
@@ -80,9 +80,9 @@ class Log:
         last_term: int = -1
 
         if not self.is_empty():
-            last_entry = self._entries[-1]
-            last_index = last_entry.index
-            last_term = last_entry.term
+            last_entry: LogEntry = self._entries[-1]
+            last_index: int = last_entry.index
+            last_term: int = last_entry.term
 
         return last_index, last_term
 
@@ -136,7 +136,7 @@ class Log:
     async def _maybe_apply_entries(self: Self) -> None:
         # Consider an entry applied once we've synchronized it to disk.
         # For efficiency, attempt to batch writes.
-        next_index = self._last_applied + 1
+        next_index: int = self._last_applied + 1
         while next_index <= self._commit_index:
             await self._apply_entry(self._entries[next_index])
             next_index += 1

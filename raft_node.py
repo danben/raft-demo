@@ -59,7 +59,7 @@ def check_term(f: Callable[[Nd, Req], Rsp]) -> Callable[[Nd, Req], Rsp]:
     def wrapper(self: Nd, rpc_request: Req) -> Rsp:
         # self._print(f'{self.config.raft_server_port} received RPC from '
         #             f'{rpc_request.requester_id}')
-        term = rpc_request.term
+        term: int = rpc_request.term
 
         # If there is a term change, update and possibly change state
         if term > self._current_term:
@@ -303,8 +303,8 @@ class Node:
                         replication_requests.append(server_task)
 
                 for fut in asyncio.as_completed(replication_requests):
-                    server = await fut
-                    del append_entries_tasks[server]
+                    server_id: int = await fut
+                    del append_entries_tasks[server_id]
                     replications += 1
                     if (
                         replications
@@ -389,7 +389,7 @@ class Node:
         heartbeat timeout. If it isn't, transition to candidate
         state. Otherwise, wait for another heartbeat.
         """
-        loop = asyncio.get_event_loop()
+        loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
 
         match self._state:
             # No way to get into candidate state outside of a heartbeat
@@ -490,11 +490,13 @@ class Node:
 
     def _become_candidate(self: Self) -> None:
         """Change the state and start an election."""
-        election_task = run_in_background(self._election_loop())
+        election_task: asyncio.Task = run_in_background(self._election_loop())
         self._state = CandidateState(election_task)
 
     def _send_heartbeats(self: Self) -> None:
         """Send one heartbeat to all other nodes."""
+        prev_log_index: int
+        prev_log_term: int
         prev_log_index, prev_log_term = self._log.last_index_and_term()
 
         for other_id, client in self._raft_rpc_clients.items():
@@ -512,11 +514,11 @@ class Node:
     async def _become_leader(self: Self) -> None:
         """Change state and start sending heartbeats."""
         self._print("Starting heartbeat loop")
-        heartbeat_interval = self.config.heartbeat_timeout_ms / 2
-        heartbeat_loop_done = run_every(
+        heartbeat_interval: float = self.config.heartbeat_timeout_ms / 2
+        heartbeat_loop_done: asyncio.Future = run_every(
             self._send_heartbeats, timedelta(milliseconds=heartbeat_interval)
         )
-        last_log_index = self._log.last_index_and_term()[0]
+        last_log_index: int = self._log.last_index_and_term()[0]
         self._state = LeaderState(
             all_ports=self.config.all_raft_server_ports,
             my_port=self.config.raft_server_port,
