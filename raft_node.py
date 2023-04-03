@@ -1,3 +1,52 @@
+"""
+Main class representing a Raft node.
+
+A node can be in one of three states. When starting up, it defaults to Follower
+status and listens for AppendEntries RPCs from the leader. Empty AppendEntries
+RPCs serve as heartbeats; if a Follower does not receive a heartbeat within a
+certain amount of time it assumes the leader is down and transitions to
+Candidate status by starting a new leader election. If a Candidate receives
+votes from a majority of nodes in the cluster, it transitions to Leader status
+and immediately begins sending heartbeats to the rest of the cluster.
+
+Leader nodes also respond to mapping proposals from clients. When a new mapping
+is proposed, the leader will attempt to replicate it on the rest of the
+cluster. Once a mapping is acked by a majority of nodes in the cluster, it is
+considered replicated and can be permanently applied (committed) to the state
+machine.
+
+To read this module, there are two good places to start:
+    - functions of the form *_handler are passed to the RPC servers. They
+      implement the logic that applies when RPC requests are received.
+    - functions of the form _become_* are the state transition functions, which
+      trigger on the conditions described above.
+
+The RPCs in more detail:
+    - AppendEntries: a leader will send this to any other node where there are
+      entries in the leader's log that have not been replicated on that node.
+      The leader will also regularly send empty AppendEntriesRequests to all
+      other nodes; these function as heartbeats. Recipients will add the new
+      log entries to their own logs, so long as the leader's log is consistent
+      with their own. (In the event that it is not, the leader will attempt to
+      find a point in the past at which the recipient's log is in agreement and
+      then start replication from there, potentially overwriting some entries
+      that were not yet committed.)
+    - VoteRequest: when a node becomes a candidate, it will start an election
+      by incrementing its term and sending VoteRequests to all other nodes. A
+      recipient will vote for any candidate whose term is greater than its own,
+      so long as they have not already voted for a different candidate for the
+      same term.
+    - GetValue: this will retrieve a mapping from the current state. In this
+      implementation, any node is allowed to respond to a GetValue request. If
+      the responder is not the leader, this means the client may receive a
+      stale value (but it will never see a value that has not been committed).
+    - ProposeMapping: the leader will add the mapping to its own log, attempt
+      to replicate it on a majority of nodes in the cluster, and on success
+      respond to the client. If a non-leader receives this RPC, it will respond
+      with the identity of the current leader so the client may retry.
+"""
+
+
 import aiofiles
 import asyncio
 import json
