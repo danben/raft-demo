@@ -122,11 +122,10 @@ def check_term(f: Callable[[Nd, Req], Rsp]) -> Callable[[Nd, Req], Rsp]:
                 case FollowerState(
                     leader=leader
                 ) if leader == rpc_request.requester_id:
-                    if isinstance(rpc_request, AppendEntriesRequest):
-                        # Reset the heartbeat timer
-                        run_in_background(self._wait_for_next_heartbeat())
-                case _:
-                    pass
+                    match rpc_request:
+                        case AppendEntriesRequest():
+                            # Reset the heartbeat timer
+                            run_in_background(self._wait_for_next_heartbeat())
 
         return f(self, rpc_request)
 
@@ -151,10 +150,12 @@ class Node:
             append_entries_handler=self._append_entries_handler,
         )
 
-        self._cluster_rpc_server = cluster_server.Server(
-            port=self.config.cluster_server_port,
+        cluster_servicer: cluster_server.Servicer = cluster_server.Servicer(
             get_value_handler=self._get_value_handler,
             propose_mapping_handler=self._propose_mapping_handler,
+        )
+        self._cluster_rpc_server = cluster_server.Server(
+            port=self.config.cluster_server_port, servicer=cluster_servicer
         )
 
         self._raft_rpc_clients = {

@@ -41,32 +41,36 @@ class JSONCodec:
 
 @dataclass(slots=True)
 class Log:
-    _path: str = field()
-    _commit_index: int = field(default=-1)
-    _fp: AsyncTextIOWrapper = field(init=False)
-    _last_applied: int = field(init=False)
+    _path: str
+    _fp: AsyncTextIOWrapper
+    _last_applied: int = field(default=-1)
     _entries: list[LogEntry] = field(default_factory=list)
     _cur_state: dict[str, str] = field(default_factory=dict)
+    _commit_index: int = field(default=-1)
     _apply_entries_task: asyncio.Task | None = field(default=None)
 
     @classmethod
     async def create(cls, path: str) -> Self:
-        ret: Self = cls(path)
-        ret._last_applied = -1
+        ret: Self
         file_exists: bool = os.path.isfile(path)
         if file_exists:
-            ret._fp = await aiofiles.open(ret._path, "r+")
-            lines: list[str] = await ret._fp.readlines()
+            fp = await aiofiles.open(path, "r+")
+            lines: list[str] = await fp.readlines()
+            entries: list[LogEntry] = []
+            cur_state: dict[str, str] = {}
             for line in lines:
                 entry = json.loads(
                     line, object_hook=JSONCodec.decode_log_entry
                 )
-                ret._entries.append(entry)
-                ret._cur_state[entry.key] = entry.value
-            if ret._entries:
-                ret._last_applied = ret._entries[-1].index
+                entries.append(entry)
+                cur_state[entry.key] = entry.value
+            last_applied = -1
+            if entries:
+                last_applied = entries[-1].index
+            ret = cls(path, fp, last_applied, entries, cur_state)
         else:
-            ret._fp = await aiofiles.open(ret._path, "w+")
+            fp = await aiofiles.open(ret._path, "w+")
+            ret = cls(path, fp)
         return ret
 
     def __del__(self: Self) -> None:
@@ -81,8 +85,8 @@ class Log:
 
         if not self.is_empty():
             last_entry: LogEntry = self._entries[-1]
-            last_index: int = last_entry.index
-            last_term: int = last_entry.term
+            last_index = last_entry.index
+            last_term = last_entry.term
 
         return last_index, last_term
 

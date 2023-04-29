@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, InitVar
 from typing import Any, Callable, Coroutine, Self
 
 import grpc
@@ -28,17 +28,10 @@ class Servicer(ClusterServicer):
 @dataclass(slots=True, kw_only=True)
 class Server:
     port: int
-    get_value_handler: Callable[[Key], GetValueResponse]
-    propose_mapping_handler: Callable[
-        [Mapping], Coroutine[Any, Any, ProposeMappingResponse]
-    ]
     server: grpc.aio.Server = field(default_factory=grpc.aio.server)
+    servicer: InitVar[Servicer]
 
-    def __post_init__(self: Self) -> None:
-        servicer: Servicer = Servicer(
-            get_value_handler=self.get_value_handler,
-            propose_mapping_handler=self.propose_mapping_handler,
-        )
+    def __post_init__(self: Self, servicer: Servicer) -> None:
         add_ClusterServicer_to_server(servicer, self.server)
         self.server.add_insecure_port(f"[::]:{self.port}")
 

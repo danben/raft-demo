@@ -56,6 +56,7 @@ class Client:
     def _print(self: Self, msg: str) -> None:
         print(f"Client: {msg}")
 
+    @property
     def current_leader(self: Self) -> int | None:
         return self._current_leader
 

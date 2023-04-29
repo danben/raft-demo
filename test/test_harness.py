@@ -120,7 +120,7 @@ async def test_leader_dies(
 
     await asyncio.sleep(2)
     # Kill the current leader
-    leader_id = cluster_client.current_leader()
+    leader_id = cluster_client.current_leader
     assert leader_id is not None
     leader_process = node_processes[leader_id]
     print(f"Test: killing the leader ({leader_id})")
